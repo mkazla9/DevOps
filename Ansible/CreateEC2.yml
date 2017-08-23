@@ -49,7 +49,3 @@
         args:
           tags:
             Name: webserver
-
-      - set_fact:
-          ec2Host: "{{ item.public_ip }}"
-        with_items: "{{ ec2.instances }}"
