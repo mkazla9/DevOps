@@ -13,7 +13,7 @@ curl -D- -u username:password -X POST https://localhost:8080/rest/api/2/issue --
        "issuetype": {
           "name": "Task"
        },
-        "customfield_10200": { "name": "ITEM_NAME" }
+        "customfield_10200": { "name": "IIITEM_NAME" }
         
 
    }
