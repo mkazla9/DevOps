@@ -8,7 +8,7 @@ curl -D- -u username:password -X POST https://localhost:8080/rest/api/2/issue --
        {
           "key": "YourProjectKey"
        },
-       "summary": "Test-RestAPI",
+       "summary": "Test-RestAPI in AWS",
        "description": "Creating of an Task using project keys and issue type names using the REST API",
        "issuetype": {
           "name": "Task"
