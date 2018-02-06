@@ -29,10 +29,6 @@
                     port=22
                     state=started
       with_items: "{{ ec2.instances }}"
-#Test commit
-    # - name: Add DataDog Agent to EC2 instance
-    #   shell: DD_API_KEY=b3fa9e1ab9a6386e8404b402923e6d34 "$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)"
-    #   with_items: "{{ ec2.instances }}"
 
     - name: Check for public IP
       shell: awk -F, '/public_ip/{print $8}' /tmp/properties/property.txt | awk -F ":"  '{print $NF}'  | tr -d '"' > /tmp/properties/ip.txt
