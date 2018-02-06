@@ -1,0 +1,47 @@
+node {
+  
+
+stage 'Checkout from bitbucket'
+        echo 'Checking out files from bitbucket'
+        checkout scm
+        def workspace = pwd ()
+        
+
+    stage 'Build using maven'
+        echo 'running clean install using maven'
+        sh 'mvn clean install'
+        echo "\u2600 workspace=${workspace}"
+
+    stage 'Upload files to nexus'
+      sh 'curl -v -u admin:admin123 --upload-file configs/tomcat-users.xml http://some_IP/nexus/content/repositories/123/demo/hello-world/4.0/configs/'
+      sh 'curl -v -u admin:admin123 --upload-file configs/settings.xml http://some_IP/nexus/content/repositories/123/demo/hello-world/4.0/configs/'
+      sh 'curl -v -u admin:admin123 --upload-file Dockerfile http://some_IP/nexus/content/repositories/123/demo/hello-world/4.0/'
+      sh 'curl -v -u admin:admin123 --upload-file target/ec2-dockerintegration.war http://some_IP/nexus/content/repositories/123/demo/hello-world/4.0/configs/'
+
+
+    stage 'Creating staging server using Amazon AMI for first use'
+        echo 'Creating EC2 machine..'
+        sh '''
+        ssh ec2-user@some_IP "cd ~/.ansible/playbooks && ansible-playbook provisionEC2.yml"
+        '''
+}
+node {
+        stage 'House keeping'
+          sh '''
+          sleep 5
+          cd /home/ec2-user/script ; /usr/bin/expect login.exp;
+          sleep 5
+          public_IP=$(cat /home/ec2-user/AmazonIP/ip.txt | xargs)
+          ssh -i /home/ec2-user/key/Build_server-Demo.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ec2-user@${public_IP} "sudo yum update -y && sudo yum install -y docker && sudo service docker start && sudo usermod -a -G docker ec2-user && mkdir /home/ec2-user/docker && cd /home/ec2-user/docker && wget -r -nH -nd -np -R index.html* http://some_IP/nexus/content/repositories/123/demo/hello-world/5.0/Dockerfile && wget -r -nH -nd -np -R index.html* http://some_IP/nexus/content/repositories/123/demo/hello-world/5.0/configs/"
+        '''
+        stage 'Creating Docker image'
+        
+        sh '''
+        docker_IP=$(cat /home/ec2-user/AmazonIP/ip.txt | xargs)
+        ssh -i /home/ec2-user/key/Build_server-Demo.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ec2-user@${docker_IP} "cd /home/ec2-user/docker &&  docker build -f Dockerfile -t tomcat:v1 . && docker run -it -d -p 9991:8080 tomcat:v1 "
+        '''
+
+}
+
+
+        

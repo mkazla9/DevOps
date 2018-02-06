@@ -1,0 +1,42 @@
+node {
+
+    stage 'Checkout from GitLab'
+        echo 'Checking out files'
+        checkout scm
+
+    stage 'Build using maven'
+        echo 'running clean install using maven'
+        sh "${tool 'M3'}  -B verify"
+        sh "${tool 'M3'} clean install"
+
+    stage 'Upload Artifacts to S3'
+        dir('target')
+	       {
+	       echo 'Artifacts to S3'
+	       sh "aws s3 cp ec2-dockerintegration.war s3://mukul/"
+         sh "aws s3 cp ../configs/settings.xml s3://mukul/"
+         sh "aws s3 cp ../configs/tomcat-users.xml s3://mukul/"
+         sh "aws s3 cp ../Dockerfile s3://mukul/"
+          }
+
+
+    stage 'Creating EC2 instance'
+        echo 'Creating EC2 instance using Ansible'
+        sh "${tool 'Ansible'}-playbook createEC2.yml"
+
+    stage 'Running docker on Ec2 with application'
+
+        sh '''
+        docker_IP=$(cat /tmp/properties/ip.txt | xargs)
+        ssh -i /var/lib/jenkins/.ssh/test1-key.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ec2-user@${docker_IP} "cd /home/ec2-user/docker &&  docker build -f Dockerfile -t tomcat:v1 . && docker run -it -d -p 9991:8080 tomcat:v1 "
+        '''
+
+    stage 'Testing stage'
+        echo 'Running unit test cases'
+        echo '==================='
+        echo 'Test Cases complete'
+
+   
+    }
+
+}
