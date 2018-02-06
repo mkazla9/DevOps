@@ -1,0 +1,10 @@
+---
+- name: Configure Workflow CI/CD
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: yes
+  
+
+  roles:
+    - common

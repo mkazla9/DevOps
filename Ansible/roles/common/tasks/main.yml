@@ -1,0 +1,11 @@
+---
+# tasks file for common
+- name: Install git on build server
+  apt: name=git state=present
+
+- name: clone a private repository
+  git:
+  repo: 'https://github.com/devopsGuy/DevOps.git'
+  dest: /Atom/clone
+  key_file: /home/websym/.ssh/id_rsagit.pub
+  update: yes
