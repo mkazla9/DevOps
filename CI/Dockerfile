@@ -13,9 +13,9 @@ ENV TOMCAT_PASSWORD 123456
 
 WORKDIR ${CATALINA_HOME}
 
-ADD ec2-dockerintegration.war ${CATALINA_HOME}/webapps/ec2-docker.war
-ADD settings.xml /usr/local/tomcat/conf/
-ADD tomcat-users.xml /usr/local/tomcat/conf/
+ADD target/ec2-dockerintegration.war ${CATALINA_HOME}/webapps/ec2-docker.war
+ADD configs/settings.xml /usr/local/tomcat/conf/
+ADD configs/tomcat-users.xml /usr/local/tomcat/conf/
 
 EXPOSE 9991:8080
 
