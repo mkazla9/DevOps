@@ -1,0 +1,1 @@
+pip_extra_args: '-i https://pypi.doubanio.com/simple'

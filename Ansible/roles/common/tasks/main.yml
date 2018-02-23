@@ -1,0 +1,54 @@
+---
+# tasks file for common
+- name: Update Linux to latest
+  yum: name="*" 
+  state: latest
+
+- name: Install git on build server
+  yum: name=git state=present
+
+- name: Download Apache Maven 
+  get_url: url=http://www-eu.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz dest=/tmp/apache-maven-3.5.2-bin.tar.gz
+
+- name: Untar Maven 
+  shell: chdir=/tmp creates=/opt/apache-maven-3.5.2 tar -zxf apache-maven-3.5.2-bin.tar.gz -C /opt
+
+- name: Update path for maven use
+  shell: export PATH=/opt/apache-maven-3.5.2/bin:$PATH
+
+- name: Install Python 
+  yum: name=python state=present
+
+- name: Install Pip
+  yum: name=python-pip state=present
+
+- name: Install boto via PIP
+  pip: name=boto state=latest
+
+- name: Install AWS-CLI via PIP
+  pip: name=awscli state=present 
+
+- name: Install python setuptools and docker
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+  with_items:
+    - python-setuptools
+    - docker
+
+- name: Start docker
+  service:
+    name: docker
+    state: running
+
+- name: Install pypi
+  easy_install: name=pip
+
+- name: Install docker-py to latest
+  pip:
+    name: "{{ item }}"
+    state: latest
+    extra_args: "{{ pip_extra_args }}"
+  with_items:
+    - docker-py
+

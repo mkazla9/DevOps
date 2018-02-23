@@ -1,0 +1,20 @@
+---
+# tasks file for CI
+
+- name: Clone a private repository
+  git:
+   repo: 'https://github.com/devopsGuy/DevOps.git'
+   dest: /home/CI 
+   update: yes
+
+- name: Permissions to cloned directory
+  file:
+   path: /home/CI/CI/
+   owner: ec2-user
+   group: ec2-user
+   mode: 0777
+
+- name: Invoke docker file
+  command: docker build -f Dockerfile -t tomcat:v1 .
+  args:
+    chdir: /home/CI/CI

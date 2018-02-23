@@ -1,0 +1,21 @@
+---
+  ec2:
+    aws_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxxXxxx
+    aws_secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXX
+    key_name: ABC
+    group: DEF
+    instance_type: t2.micro
+    image: ami-f123456
+    region: us-east-2
+    wait: yes
+    wait_timeout: 500
+    count: 1
+    assign_public_ip: yes
+    subnet: subnet-a123456
+    project_name: XYZ
+    env: staging
+    app_code_user: "ec2-user"# remote user
+    hoststring: "ansible_ssh_user=ec2-user ansible_ssh_private_key_file=/home/Ansible/ABC.pem"
+    hostpath: "/hosts"
+    instance_tags:
+      name: Build_Server

@@ -1,0 +1,18 @@
+---
+- name: Create new build server on AWS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - AWS
+
+- name: Install dependencies on newly created server and Build application using maven
+  hosts: deploy
+  user: ec2-user
+  gather_facts: false
+  become: yes
+
+  roles:
+    - common
+    - CI
